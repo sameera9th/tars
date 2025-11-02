@@ -1,1 +1,1 @@
-# tars
+TARS — minimal POS starter
