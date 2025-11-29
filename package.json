@@ -1,8 +1,0 @@
-{
-  "name": "tars",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
-}
