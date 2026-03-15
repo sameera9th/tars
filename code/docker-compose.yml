@@ -1,0 +1,37 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: tars-api
+    working_dir: /app/api
+    command: pnpm start:dev
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/api/node_modules
+      - /app/ui/node_modules
+    environment:
+      PORT: 3001
+
+  ui:
+    build:
+      context: .
+      dockerfile: ui/Dockerfile
+    container_name: tars-ui
+    working_dir: /app/ui
+    command: pnpm dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/api/node_modules
+      - /app/ui/node_modules
+    environment:
+      PORT: 3000
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+    depends_on:
+      - api
