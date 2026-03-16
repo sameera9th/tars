@@ -1,4 +1,17 @@
 services:
+  postgres:
+    image: postgres:16
+    container_name: tars-postgres
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: tars
+      POSTGRES_PASSWORD: tars
+      POSTGRES_DB: tars_dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   api:
     build:
       context: .
@@ -14,7 +27,13 @@ services:
       - /app/api/node_modules
       - /app/ui/node_modules
     environment:
+      NODE_ENV: development
       PORT: 3001
+      DATABASE_URL: postgresql://tars:tars@postgres:5432/tars_dev?schema=public
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+    depends_on:
+      - postgres
 
   ui:
     build:
@@ -22,7 +41,7 @@ services:
       dockerfile: ui/Dockerfile
     container_name: tars-ui
     working_dir: /app/ui
-    command: pnpm dev
+    command: pnpm dev --hostname 0.0.0.0
     ports:
       - "3000:3000"
     volumes:
@@ -31,7 +50,13 @@ services:
       - /app/api/node_modules
       - /app/ui/node_modules
     environment:
+      NODE_ENV: development
       PORT: 3000
       NEXT_PUBLIC_API_URL: http://localhost:3001
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
     depends_on:
       - api
+
+volumes:
+  postgres_data:
